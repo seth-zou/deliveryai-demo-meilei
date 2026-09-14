@@ -19,10 +19,13 @@ test.describe('中英文语言切换 - E2E 验收测试', () => {
     await page.reload()
     // 绑定桌台页面应显示中文文案
     await expect(page.getByText('热气升腾，')).toBeVisible()
-    // 顶栏 banner 显示中文
-    await expect(page.getByText('概念演示 / 非官方 · 仅用于服务流程原型展示')).toBeVisible()
-    // 语言切换按钮显示 "EN"
-    await expect(page.getByRole('button', { name: '切换语言' })).toContainText('EN')
+    await expect(page.getByText('好味即刻开场。')).toBeVisible()
+    await expect(page.getByText('模拟门店')).toBeVisible()
+    await expect(page.getByText('沸点 · 星河里店')).toBeVisible()
+    // 桌台选项显示中文区域名
+    await expect(page.getByText(/大厅/)).toBeVisible()
+    // html lang 属性为 zh-CN
+    await expect(page.locator('html')).toHaveAttribute('lang', 'zh-CN')
   })
 
   test('LANG-002: 切换到英文后所有关键文案立即更新', async ({ page }) => {
@@ -70,13 +73,12 @@ test.describe('中英文语言切换 - E2E 验收测试', () => {
     // 验证 localStorage 已持久化
     const stored = await page.evaluate(() => localStorage.getItem('i18nextLng'))
     expect(stored).toBe('en')
-    // 刷新页面
+    // 刷新页面 — 应用状态重置到绑定桌台页面，但语言偏好保留
     await page.reload()
-    // 仍在菜单页面（state 在内存中重置但 localStorage 语言偏好保留）
     // 绑定桌台页面应显示英文文案
     await expect(page.getByText('Steam rising,')).toBeVisible()
-    // 语言切换按钮显示 "中"
-    await expect(page.getByRole('button', { name: 'Switch language' })).toContainText('中')
+    await expect(page.getByText('great flavors begin now.')).toBeVisible()
+    await expect(page.getByText('Simulated Store')).toBeVisible()
     // html lang 属性为 en
     await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   })
